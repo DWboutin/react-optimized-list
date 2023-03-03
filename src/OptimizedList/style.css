@@ -1,0 +1,19 @@
+.ro-list {
+  overflow: auto;
+  height: 100%;
+  width: 100%;
+}
+
+.ro-list-scroller {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+.ro-list-scroller.reverse {
+  flex-direction: column-reverse;
+}
+
+.ro-list-item {
+  width: 100%;
+  overflow: hidden;
+}
