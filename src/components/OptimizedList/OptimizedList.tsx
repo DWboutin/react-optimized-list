@@ -1,18 +1,9 @@
-import {
-  Children,
-  FunctionComponent,
-  ReactNode,
-  RefObject,
-  createContext,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react'
+import { type FunctionComponent, type ReactNode, type RefObject } from 'react'
+import { Children, createContext, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { node as PropTypeNode, bool as PropTypeBool } from 'prop-types'
+
 import OptimizedListItem from './OptimizedListItem'
-import createDebouncedFunction from './libs/createDebouncedFunction'
-import './style.css'
+import createDebouncedFunction from '../libs/createDebouncedFunction'
 
 export interface Props {
   children: ReactNode
@@ -26,9 +17,12 @@ export interface OptimizedListContextInterface {
   maintainScrollPosition: () => void
 }
 
+export type TOptimizedList = FunctionComponent<Props>
+
 export const OptimizedListContext = createContext<OptimizedListContextInterface | null>(null)
 
-const OptimizedList: FunctionComponent<Props> = ({ children, reverse = true }) => {
+const OptimizedList: TOptimizedList = ({ children, reverse = true }) => {
+  const scrollerClassNames = ['ro-list-scroller', reverse ? 'reverse' : null].filter(Boolean)
   const childrenCount = Children.count(children)
   const itemChildren = useMemo(() => {
     return !reverse ? children : Children.toArray(children).reverse()
@@ -39,14 +33,14 @@ const OptimizedList: FunctionComponent<Props> = ({ children, reverse = true }) =
   const scrollObserver = useRef<MutationObserver>()
   const lastScrollPos = useRef<number>()
   const debouncedSaveScroll = createDebouncedFunction(() => {
-    if (!lastScrollPos.current || !listRef.current) return
+    if (!lastScrollPos.current || listRef.current == null) return
 
     lastScrollPos.current = listRef.current?.scrollHeight - listRef.current.scrollTop
   }, 100)
 
   const registerLoadedListItem = useCallback(
     (index: number) => {
-      if (!listRef.current || index >= childrenCount - 1) return
+      if (listRef.current == null || index >= childrenCount - 1) return
 
       setScrollToBottom()
 
@@ -56,8 +50,8 @@ const OptimizedList: FunctionComponent<Props> = ({ children, reverse = true }) =
   )
 
   const handleOnScroll = useCallback(() => {
-    const scrollTop = listRef.current?.scrollTop || 0
-    const itemHeight = listRef.current?.getBoundingClientRect().height || 0
+    const scrollTop = listRef.current?.scrollTop ?? 0
+    const itemHeight = listRef.current?.getBoundingClientRect().height ?? 0
     const scrollBottomLimit = itemHeight + scrollTop
 
     debouncedSaveScroll()
@@ -65,16 +59,16 @@ const OptimizedList: FunctionComponent<Props> = ({ children, reverse = true }) =
     setVisibleArea([scrollTop, scrollBottomLimit])
   }, [listRef])
 
-  const setScrollToBottom = () => {
-    if (!listRef.current) return
+  const setScrollToBottom: () => void = () => {
+    if (listRef.current == null) return
 
     lastScrollPos.current = listRef.current?.scrollHeight - listRef.current.scrollTop
 
     listRef.current.scrollTop = listRef.current?.scrollHeight
   }
 
-  const maintainScrollPosition = () => {
-    if (!listRef.current || !lastScrollPos.current) return
+  const maintainScrollPosition: () => void = () => {
+    if (listRef.current == null || !lastScrollPos.current) return
 
     const scrollTop = listRef.current?.scrollHeight - lastScrollPos.current
 
@@ -96,7 +90,7 @@ const OptimizedList: FunctionComponent<Props> = ({ children, reverse = true }) =
   }, [listRef])
 
   useEffect(() => {
-    if (!listRef.current || scrollObserver.current) return
+    if (listRef.current == null || scrollObserver.current != null) return
 
     scrollObserver.current = new MutationObserver(maintainScrollPosition)
 
@@ -116,8 +110,8 @@ const OptimizedList: FunctionComponent<Props> = ({ children, reverse = true }) =
       }}
     >
       <div className="ro-list" ref={listRef}>
-        {listRef.current && (
-          <div className={`ro-list-scroller ${reverse && 'reverse'}`}>
+        {listRef.current != null && (
+          <div className={scrollerClassNames.join(' ')}>
             {Children.map(itemChildren, (child, i) => {
               if (i > renderedLastIndex) return null
 
@@ -132,6 +126,11 @@ const OptimizedList: FunctionComponent<Props> = ({ children, reverse = true }) =
       </div>
     </OptimizedListContext.Provider>
   )
+}
+
+OptimizedList.propTypes = {
+  children: PropTypeNode.isRequired,
+  reverse: PropTypeBool,
 }
 
 export default OptimizedList

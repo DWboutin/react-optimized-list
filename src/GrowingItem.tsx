@@ -1,4 +1,4 @@
-import { FunctionComponent, ReactNode, useEffect, useState } from 'react'
+import { type FunctionComponent, type ReactNode, useEffect, useState } from 'react'
 
 export interface Props {
   children: ReactNode

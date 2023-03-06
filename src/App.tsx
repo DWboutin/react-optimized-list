@@ -1,9 +1,10 @@
-import { useCallback, useState } from 'react'
+import { type ReactElement, useCallback, useState } from 'react'
 import './App.css'
-import OptimizedList from './OptimizedList/OptimizedList'
+import OptimizedList from './components/OptimizedList/OptimizedList'
 import GrowingItem from './GrowingItem'
+import './components/style.css'
 
-function App() {
+function App(): ReactElement {
   const [items, setItems] = useState(Array.from({ length: 100 }, (_, i) => `Hello ${i}`))
 
   const handleAddItem = useCallback(() => {
@@ -13,7 +14,7 @@ function App() {
   return (
     <div className="App">
       <div style={{ height: '400px', width: '400px', padding: '20px', border: '1px dashed black' }}>
-        <OptimizedList reverse>
+        <OptimizedList>
           {items.map((item, i) => (
             <div className="listItem" key={i}>
               <GrowingItem key={i} index={i}>

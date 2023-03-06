@@ -1,13 +1,7 @@
-import {
-  FunctionComponent,
-  ReactNode,
-  memo,
-  useCallback,
-  useContext,
-  useEffect,
-  useRef,
-} from 'react'
-import { OptimizedListContext, OptimizedListContextInterface } from './OptimizedList'
+import { type FunctionComponent, type ReactNode } from 'react'
+import { type OptimizedListContextInterface } from './OptimizedList'
+import { memo, useCallback, useContext, useEffect, useRef } from 'react'
+import { OptimizedListContext } from './OptimizedList'
 
 export interface Props {
   children: ReactNode
@@ -16,7 +10,7 @@ export interface Props {
 
 export const listItemClassname = 'ro-list-item'
 
-const getElementHeight = (el: HTMLElement) => {
+const getElementHeight: (el: HTMLElement) => number = (el) => {
   const computedStyle = window.getComputedStyle(el)
   let height = el.clientHeight
 
@@ -28,6 +22,8 @@ const getElementHeight = (el: HTMLElement) => {
   return height
 }
 
+export type TOptimizedListItem = FunctionComponent<Props>
+
 const OptimizedListItem: FunctionComponent<Props> = ({ children, index }) => {
   const itemTopPos = useRef<number | null>(null)
   const isInitialized = useRef<boolean>(false)
@@ -36,10 +32,9 @@ const OptimizedListItem: FunctionComponent<Props> = ({ children, index }) => {
   const itemRef = useRef<HTMLDivElement>(null)
   const listContext = useContext(OptimizedListContext)
   const visibleAreaObserver = useRef<IntersectionObserver>()
-  const mutationObserver = useRef<MutationObserver>()
 
   const setTopHeightRef = useCallback(() => {
-    if (!itemRef.current) return
+    if (itemRef.current == null) return
 
     itemTopPos.current = itemRef.current.offsetTop
     itemHeight.current = getElementHeight(itemRef.current)
@@ -69,7 +64,7 @@ const OptimizedListItem: FunctionComponent<Props> = ({ children, index }) => {
     (entries: IntersectionObserverEntry[]) => {
       const isVisible = entries.some((entry) => entry.isIntersecting)
 
-      if (isVisible && isRegistered.current === false) {
+      if (isVisible && !isRegistered.current) {
         registerItemIndex()
         visibleAreaObserver.current?.disconnect()
         isRegistered.current = true
@@ -79,13 +74,13 @@ const OptimizedListItem: FunctionComponent<Props> = ({ children, index }) => {
   )
 
   useEffect(() => {
-    if (!itemRef.current || !listContext?.visibleArea) return
+    if (itemRef.current == null || listContext?.visibleArea == null) return
 
     setTopHeightRef()
   }, [itemRef, listContext])
 
   useEffect(() => {
-    if (isInitialized.current !== false || itemRef.current === null) return
+    if (isInitialized.current || itemRef.current === null) return
 
     if (isVisibleInContainer()) {
       registerItemIndex()
@@ -100,7 +95,7 @@ const OptimizedListItem: FunctionComponent<Props> = ({ children, index }) => {
     }
 
     return () => {
-      if (!visibleAreaObserver.current) return
+      if (visibleAreaObserver.current == null) return
 
       visibleAreaObserver.current.disconnect()
     }

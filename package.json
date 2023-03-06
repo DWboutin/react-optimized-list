@@ -15,10 +15,6 @@
     "commit": "cz",
     "prepare": "husky install"
   },
-  "dependencies": {
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
-  },
   "devDependencies": {
     "@types/react": "^18.0.27",
     "@types/react-dom": "^18.0.10",
@@ -36,13 +32,54 @@
     "eslint-plugin-simple-import-sort": "^10.0.0",
     "husky": "^8.0.3",
     "prettier": "^2.8.4",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "react-hooks": "^1.0.1",
+    "rollup-plugin-visualizer": "^5.9.0",
     "typescript": "^4.9.5",
-    "vite": "^4.1.0"
+    "vite": "^4.1.0",
+    "vite-plugin-dts": "^2.0.2",
+    "vite-plugin-linter": "^2.0.2",
+    "vite-tsconfig-paths": "^4.0.5"
+  },
+  "peerDependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   },
   "config": {
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
     }
+  },
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "import": "./dist/react-optimized-list.es.js",
+      "require": "./dist/react-optimized-list.umd.js"
+    },
+    "./dist/style.css": "./dist/style.css"
+  },
+  "main": "./dist/react-optimized-list.umd.js",
+  "module": "./dist/react-optimized-list.es.js",
+  "types": "./dist/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DWboutin/react-optimized-list"
+  },
+  "keywords": [
+    "react",
+    "optimized list",
+    "list"
+  ],
+  "description": "A really simple and straightforward optimized React list",
+  "author": "Mikael Boutin",
+  "bugs": {
+    "url": "https://github.com/DWboutin/react-optimized-list/issues"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "prop-types": "^15.8.1"
   }
 }
