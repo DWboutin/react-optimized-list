@@ -25,6 +25,8 @@ export default defineConfig((configEnv) => ({
     }),
   ],
   build: {
+    minify: false,
+    sourcemap: false,
     lib: {
       entry: resolve('src', 'components/index.ts'),
       name: 'ReactOptimizedList',
@@ -32,7 +34,7 @@ export default defineConfig((configEnv) => ({
       fileName: (format) => `react-optimized-list.${format}.js`,
     },
     rollupOptions: {
-      external: [...Object.keys(packageJson.peerDependencies)],
+      // external: [...Object.keys(packageJson.peerDependencies)],
       output: {
         globals: { react: 'react' },
       },

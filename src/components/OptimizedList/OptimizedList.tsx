@@ -110,19 +110,17 @@ const OptimizedList: TOptimizedList = ({ children, reverse = true }) => {
       }}
     >
       <div className="ro-list" ref={listRef}>
-        {listRef.current != null && (
-          <div className={scrollerClassNames.join(' ')}>
-            {Children.map(itemChildren, (child, i) => {
-              if (i > renderedLastIndex) return null
+        <div className={scrollerClassNames.join(' ')}>
+          {Children.map(itemChildren, (child, i) => {
+            if (i > renderedLastIndex) return null
 
-              return (
-                <OptimizedListItem key={i} index={i}>
-                  {child}
-                </OptimizedListItem>
-              )
-            })}
-          </div>
-        )}
+            return (
+              <OptimizedListItem key={i} index={i}>
+                {child}
+              </OptimizedListItem>
+            )
+          })}
+        </div>
       </div>
     </OptimizedListContext.Provider>
   )
